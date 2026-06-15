@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #FFFFFF;
+    color: #111111;
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.6;
+  }
+}
+
+/* Custom Consulting & Editorial Styles */
+.premium-shadow {
+  box-shadow: 0 1px 3px rgba(17, 17, 17, 0.02), 0 8px 24px rgba(17, 17, 17, 0.04);
+}
+
+.premium-shadow-hover:hover {
+  box-shadow: 0 4px 6px rgba(17, 17, 17, 0.03), 0 12px 32px rgba(17, 17, 17, 0.06);
+}
+
+/* Transition Utilities */
+.fade-in {
+  animation: fadeIn 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
