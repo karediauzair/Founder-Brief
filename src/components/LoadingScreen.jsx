@@ -3,12 +3,12 @@ import { CheckCircle2, Loader2, Search } from 'lucide-react';
 
 const steps = [
   "Collecting company information",
-  "Reviewing recent developments",
-  "Analyzing market position",
+  "Reviewing official sources",
+  "Analyzing recent developments",
   "Evaluating opportunities",
   "Assessing risks",
-  "Preparing meeting strategy",
-  "Generating final report"
+  "Generating meeting strategy",
+  "Preparing final intelligence brief"
 ];
 
 const ROTATING_MESSAGES = [
@@ -143,7 +143,21 @@ export default function LoadingScreen({
             );
           })}
         </div>
-        
+        {/* ETA Progress */}
+        <div className="mt-8 pt-6 border-t border-gray-100">
+          <div className="flex justify-between items-center text-xs text-gray-500 mb-2">
+            <span>Estimated completion</span>
+            <span className="font-medium text-gray-900">
+              ~{Math.max(0, Math.ceil((15000 - elapsedTime) / 1000))}s remaining
+            </span>
+          </div>
+          <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-blue-600 rounded-full transition-all duration-300 ease-out"
+              style={{ width: `${Math.min(100, (elapsedTime / 15000) * 100)}%` }}
+            ></div>
+          </div>
+        </div>
       </div>
     </div>
   );
