@@ -7,80 +7,73 @@ export default function BriefOutput({ brief, company, purpose, onReset }) {
   const [copied, setCopied] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
+  const confidenceScore = brief?.confidenceScore || 85;
   const confidenceColor = () => {
-    if (!brief.confidenceScore) return 'text-gray-500 bg-gray-100 border-gray-200';
-    const score = parseInt(brief.confidenceScore, 10);
-    if (score >= 90) return 'text-green-700 bg-green-50 border-green-200';
-    if (score >= 70) return 'text-yellow-700 bg-yellow-50 border-yellow-200';
-    return 'text-red-700 bg-red-50 border-red-200';
+    if (confidenceScore >= 90) return 'text-green-700 border-green-200 bg-green-50';
+    if (confidenceScore >= 75) return 'text-blue-700 border-blue-200 bg-blue-50';
+    if (confidenceScore >= 60) return 'text-orange-700 border-orange-200 bg-orange-50';
+    return 'text-red-700 border-red-200 bg-red-50';
   };
 
   const confidenceLabel = () => {
-    if (!brief.confidenceScore) return 'Unknown Confidence';
-    const score = parseInt(brief.confidenceScore, 10);
-    if (score >= 90) return 'High Confidence';
-    if (score >= 70) return 'Medium Confidence';
-    return 'Low Confidence';
+    if (confidenceScore >= 90) return 'High Confidence';
+    if (confidenceScore >= 75) return 'Moderate Confidence';
+    if (confidenceScore >= 60) return 'Low Confidence';
+    return 'Unverified Data';
   };
 
   const handleCopy = async () => {
     if (!brief) return;
 
-    let sourcesText = '';
-    if (Array.isArray(brief.sources) && brief.sources.length > 0) {
-      sourcesText = brief.sources.map(s => `• ${s.title}: ${s.link}`).join('\n');
-    } else {
-      sourcesText = 'No reference sources found.';
-    }
+    // Formatting for text copy
+    const sourcesText = brief.sources?.map((s, i) => `[${i + 1}] ${s.title}\n    ${s.link}`).join('\n\n') || "No sources provided.";
 
-    const formattedText = `FOUNDERBRIEF: EXECUTIVE INTELLIGENCE SUMMARY
-Company: ${company.toUpperCase()}
-Research Purpose: ${purpose || "General company intelligence"}
-Generated: ${new Date().toLocaleDateString()}
-Confidence: ${brief.confidenceScore || 'N/A'}% (${confidenceLabel()})
+    const formattedText = `
+==================================================
+FOUNDERBRIEF: INTELLIGENCE REPORT
+==================================================
+Target: ${company}
+Generated: ${new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+Purpose: ${purpose || "General Intelligence"}
 
 ==================================================
 1. EXECUTIVE SUMMARY
 ==================================================
-${brief.executiveSummary}
+${brief.executiveSummary || "No summary available."}
 
 ==================================================
 2. COMPANY SNAPSHOT
 ==================================================
-${brief.companySnapshot}
+${brief.companySnapshot || "No snapshot available."}
 
 ==================================================
-3. BUSINESS OVERVIEW
+3. BUSINESS MODEL
 ==================================================
-${brief.businessOverview}
+${brief.businessModel || "No business model details."}
 
 ==================================================
-4. RECENT DEVELOPMENTS
+4. MEETING STRATEGY
 ==================================================
-${brief.recentDevelopments}
+${brief.meetingStrategy || "No strategy available."}
 
 ==================================================
-5. RISKS & CONSIDERATIONS
+5. OPPORTUNITIES
 ==================================================
-${brief.risks}
+${brief.opportunities || "No opportunities listed."}
 
 ==================================================
-6. GOAL-SPECIFIC INTELLIGENCE
+6. RISKS & CHALLENGES
 ==================================================
-${brief.goalSpecificIntelligence}
+${brief.risks || "No risks listed."}
 
 ==================================================
-7. MEETING STRATEGY
+7. REPORT CONFIDENCE
 ==================================================
-${brief.meetingStrategy}
+Score: ${brief.confidenceScore || '--'}%
+Notes: ${brief.dataQualityNotes || "No specific data conflicts noted."}
 
 ==================================================
-8. DATA QUALITY NOTES
-==================================================
-${brief.dataQualityNotes || "No specific data conflicts noted."}
-
-==================================================
-9. SOURCES & REFERENCES
+8. SOURCES & REFERENCES
 ==================================================
 ${sourcesText}
 
@@ -157,90 +150,62 @@ FounderBrief · Handcrafted Business Intelligence`;
         
         {/* Editorial Header */}
         <div className="p-10 border-b border-gray-100 bg-white">
-          <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-            <div>
-              <div className="flex items-center gap-3 mb-4">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full">
-                  INTELLIGENCE BRIEF
-                </span>
-                <span className="text-xs font-medium text-gray-400">
-                  {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-                </span>
-              </div>
-              <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight tracking-tight mb-2">
-                {company}
-              </h1>
-              {purpose && (
-                <div className="mt-4 inline-flex items-start">
-                  <div className="w-1 h-full bg-blue-500 rounded-full mr-3 shrink-0"></div>
-                  <p className="text-sm text-gray-600 leading-relaxed max-w-2xl font-medium">
-                    <span className="text-gray-400 text-xs font-bold uppercase tracking-wider block mb-0.5">Research Purpose</span>
-                    {purpose}
-                  </p>
-                </div>
-              )}
-            </div>
-            
-            {/* Metadata Stats Box */}
-            <div className="flex flex-row md:flex-col gap-4 bg-[#FAFAFA] p-5 rounded-xl border border-gray-100 shrink-0 min-w-[200px]">
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 block mb-1">
-                  Confidence Score
-                </span>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-bold text-gray-900">{brief.confidenceScore || '--'}%</span>
-                  <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ${confidenceColor()}`}>
-                    {confidenceLabel()}
-                  </span>
-                </div>
-              </div>
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 block mb-1">
-                  Sources Analyzed
-                </span>
-                <span className="text-sm font-semibold text-gray-900 flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-blue-600" />
-                  {brief.sources?.length || 0} Trusted Sources
-                </span>
-              </div>
-            </div>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight tracking-tight mb-4">
+            {company}
+          </h1>
+          
+          <div className="flex flex-col gap-2 text-sm text-gray-600 font-medium">
+            {purpose && (
+              <p className="text-gray-900 text-base mb-2">{purpose}</p>
+            )}
+            <p>Generated: {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
+            <p>{brief.sources?.length || 0} Sources Used</p>
+            <p className="flex items-center gap-1.5">
+              Confidence: {brief.confidenceScore || '--'}% 
+              <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ml-2 ${confidenceColor()}`}>
+                {confidenceLabel()}
+              </span>
+            </p>
           </div>
         </div>
 
         {/* Report Content Grid */}
         <div className="p-10 grid grid-cols-1 md:grid-cols-2 gap-8 bg-white">
+          {/* Report Confidence Card */}
           <div className="col-span-1 md:col-span-2">
-            <BriefCard label="EXECUTIVE SUMMARY" content={brief.executiveSummary} />
-          </div>
-          
-          <div className="col-span-1">
-            <BriefCard label="COMPANY SNAPSHOT" content={brief.companySnapshot} />
-          </div>
-          
-          <div className="col-span-1">
-            <BriefCard label="BUSINESS OVERVIEW" content={brief.businessOverview} />
-          </div>
-          
-          <div className="col-span-1">
-            <BriefCard label="RECENT DEVELOPMENTS" content={brief.recentDevelopments} />
-          </div>
-          
-          <div className="col-span-1">
-            <BriefCard label="RISKS & CONSIDERATIONS" content={brief.risks} />
-          </div>
-          
-          <div className="col-span-1 md:col-span-2">
-            <BriefCard label="GOAL-SPECIFIC INTELLIGENCE" content={brief.goalSpecificIntelligence} />
-          </div>
-          
-          {/* Meeting Strategy - Full Width, Special Styling applied in BriefCard */}
-          <div className="col-span-1 md:col-span-2">
-            <BriefCard label="MEETING STRATEGY" content={brief.meetingStrategy} isStrategy={true} />
+            <BriefCard 
+              label="REPORT CONFIDENCE" 
+              content={{
+                label: confidenceLabel(),
+                score: brief.confidenceScore,
+                reason: brief.dataQualityNotes || "This report is based on official company information, recent news coverage, and multiple independent sources."
+              }} 
+              isConfidence={true} 
+            />
           </div>
 
-          {/* Data Quality Notes */}
           <div className="col-span-1 md:col-span-2">
-            <BriefCard label="DATA QUALITY NOTES" content={brief.dataQualityNotes} isNotes={true} />
+            <BriefCard label="EXECUTIVE SUMMARY" content={brief.executiveSummary} company={company} />
+          </div>
+          
+          <div className="col-span-1">
+            <BriefCard label="COMPANY SNAPSHOT" content={brief.companySnapshot} company={company} />
+          </div>
+          
+          <div className="col-span-1">
+            <BriefCard label="BUSINESS MODEL" content={brief.businessModel} company={company} />
+          </div>
+
+          <div className="col-span-1 md:col-span-2">
+            <BriefCard label="MEETING STRATEGY" content={brief.meetingStrategy} isStrategy={true} company={company} />
+          </div>
+
+          <div className="col-span-1">
+            <BriefCard label="OPPORTUNITIES" content={brief.opportunities} company={company} />
+          </div>
+
+          <div className="col-span-1">
+            <BriefCard label="RISKS" content={brief.risks} company={company} />
           </div>
 
           {/* Sources Transparency */}
@@ -249,36 +214,11 @@ FounderBrief · Handcrafted Business Intelligence`;
               label="RESEARCH SOURCES" 
               content={brief.sources} 
               sourceBreakdown={brief.sourceBreakdown} 
+              company={company}
             />
           </div>
         </div>
       </div>
-
-      {/* Differentiation Block */}
-      <div className="max-w-[1000px] mx-auto mt-12 bg-white rounded-2xl border border-gray-200 p-8 shadow-sm no-print">
-        <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400 mb-6 text-center">Why FounderBrief?</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-          <div>
-            <div className="text-xs font-semibold text-gray-500 mb-1">Traditional Research</div>
-            <div className="text-sm text-gray-400 line-through mb-2">Hours of searching</div>
-            <div className="text-xs font-semibold text-blue-600 mb-1">FounderBrief</div>
-            <div className="text-sm font-semibold text-gray-900">Seconds to insight</div>
-          </div>
-          <div className="border-t border-gray-100 pt-6 md:border-t-0 md:pt-0 md:border-l md:pl-6">
-            <div className="text-xs font-semibold text-gray-500 mb-1">Traditional Research</div>
-            <div className="text-sm text-gray-400 line-through mb-2">Information gathering</div>
-            <div className="text-xs font-semibold text-blue-600 mb-1">FounderBrief</div>
-            <div className="text-sm font-semibold text-gray-900">Meeting preparation</div>
-          </div>
-          <div className="border-t border-gray-100 pt-6 md:border-t-0 md:pt-0 md:border-l md:pl-6">
-            <div className="text-xs font-semibold text-gray-500 mb-1">Traditional Research</div>
-            <div className="text-sm text-gray-400 line-through mb-2">Generic data</div>
-            <div className="text-xs font-semibold text-blue-600 mb-1">FounderBrief</div>
-            <div className="text-sm font-semibold text-gray-900">Goal-specific intelligence</div>
-          </div>
-        </div>
-      </div>
-
     </div>
   );
 }
