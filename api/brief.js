@@ -29,11 +29,10 @@ CRITICAL:
   "recentDevelopments": "3-5 recent developments formatted as a single string (NOT a JSON array) with items separated by \\n. Each item must contain a headline, short explanation, and source reference (e.g., '• Headline: Stripe Unveils New API Optimizations \\n  Explanation: Enhances developer experience... \\n  Source: [Source: TechCrunch]').",
   "risks": "Market, competitive, operational, regulatory, and strategic concerns. Do not exaggerate. If confidence is low, clearly state uncertainty. Format as a single string (NOT a JSON array) with points separated by \\n.",
   "goalSpecificIntelligence": "Contextual intelligence customized for the Research Purpose. Format as a single string with points separated by \\n.",
-  "meetingStrategy": "A single string (NOT a JSON object) structured exactly as follows using literal \\n for newlines:
-### Focus On\\n• DISCUSSION_AREA_1: BRIEF_EXPLANATION\\n• DISCUSSION_AREA_2: BRIEF_EXPLANATION\\n... (3-5 areas)
-\\n### Avoid\\n• TOPIC_TO_AVOID_1: BRIEF_EXPLANATION\\n... (topics/approaches to avoid)
-\\n### Questions To Ask\\n• QUESTION_1\\n• QUESTION_2\\n... (5-8 thoughtful, non-generic, business-focused questions)
-\\n### Potential Opportunity\\nSTRATEGIC_INSIGHT (2-4 sentences advice from business analyst)"
+  "meetingStrategy": "A single string (NOT a JSON object) structured exactly as follows using literal \\n for newlines:\\n### Focus On\\n• DISCUSSION_AREA_1: BRIEF_EXPLANATION\\n• DISCUSSION_AREA_2: BRIEF_EXPLANATION\\n... (3-5 areas)\\n\\n### Avoid\\n• TOPIC_TO_AVOID_1: BRIEF_EXPLANATION\\n... (topics/approaches to avoid)\\n\\n### Questions To Ask\\n• QUESTION_1\\n• QUESTION_2\\n... (5-8 thoughtful, non-generic, business-focused questions)\\n\\n### Potential Opportunity\\nSTRATEGIC_INSIGHT (2-4 sentences advice from business analyst)",
+  "confidenceScore": "A single integer between 1 and 100 representing the confidence in the research based on source quality, consistency, and completeness (e.g., 89).",
+  "dataQualityNotes": "A string explaining the confidence score and noting any conflicting information. Example: 'This report is based on 12 sources, including official company websites and industry publications. Confidence Level: High. No major conflicts detected.'",
+  "sourceBreakdown": "A JSON object with exactly these keys: 'official', 'news', 'industry', 'public', containing the integer count of sources for each category."
 }`;
 
   const userMessage = `Company: ${company}

@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Briefcase, Target, ShieldCheck, Zap, Search, FileText, CheckCircle2 } from 'lucide-react';
 
 const PURPOSE_TEMPLATES = {
   "Investor Meeting": "I am preparing for an investor meeting and would like to understand the company's growth indicators, market position, business model, competitive advantages, and potential risks.",
-  "Partnership Discussion": "I am exploring a potential partnership with this company. Help me understand their strategic initiatives, collaboration opportunities, current partnerships, and key discussion points.",
-  "Competitor Research": "I am researching this company as a competitor. Help me understand their strengths, weaknesses, market position, differentiation, and competitive threats.",
-  "Vendor Evaluation": "I am evaluating this company as a potential vendor or service provider. Help me assess reliability, reputation, capabilities, risks, and suitability.",
-  "Sales Meeting": "I am preparing for a sales discussion. Help me understand their priorities, challenges, opportunities, and relevant talking points."
+  "Partnership": "I am exploring a potential partnership with this company. Help me understand their strategic initiatives, collaboration opportunities, current partnerships, and key discussion points.",
+  "Competitor": "I am researching this company as a competitor. Help me understand their strengths, weaknesses, market position, differentiation, and competitive threats.",
+  "Vendor Eval": "I am evaluating this company as a potential vendor or service provider. Help me assess reliability, reputation, capabilities, risks, and suitability.",
+  "Sales Prep": "I am preparing for a sales discussion. Help me understand their priorities, challenges, opportunities, and relevant talking points."
 };
 
 const SUGGESTIONS = ['Stripe', 'OpenAI', 'Zepto', 'Notion'];
@@ -58,79 +59,79 @@ export default function SearchInput({ onSearch }) {
   const handleSuggestionClick = (name) => {
     setCompany(name);
     setCompanyError('');
-    // Automatically set a mock default purpose if none is entered yet
     if (!purpose.trim()) {
       setPurpose(`I want to explore collaboration and partnership opportunities with ${name}.`);
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[90vh] px-4 font-sans text-center relative py-12 select-none fade-in">
+    <div className="flex flex-col min-h-screen bg-[#FAFAFA] font-sans selection:bg-blue-100 selection:text-blue-900 fade-in">
       
-      {/* 3-column Layout Container */}
-      <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-[auto_1fr_auto] gap-8 items-start justify-center">
-        
-        {/* Left Column: Desktop Tag List */}
-        <div className="hidden md:flex flex-col w-48 text-left pt-36">
-          <div className="text-[10px] uppercase tracking-widest text-[#CCCCCC] mb-3 font-bold">
-            USED FOR
+      {/* Header */}
+      <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-gray-100">
+        <div className="max-w-[1200px] mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 bg-gray-900 rounded-md flex items-center justify-center">
+              <Zap className="w-3.5 h-3.5 text-white" />
+            </div>
+            <span className="text-lg font-bold text-gray-900 tracking-tight">FounderBrief</span>
           </div>
-          <div className="flex flex-col items-start gap-1">
-            {Object.keys(PURPOSE_TEMPLATES).map((label) => (
-              <span
-                key={label}
-                onClick={() => handlePillClick(label)}
-                className="text-sm text-[#888480] hover:text-[#E8622A] cursor-pointer transition-colors py-1 block text-left"
-              >
-                {label}
-              </span>
-            ))}
-          </div>
+          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-500">
+            <a href="#features" className="hover:text-gray-900 transition-colors">Features</a>
+            <a href="#how-it-works" className="hover:text-gray-900 transition-colors">How It Works</a>
+            <a href="#" className="hover:text-gray-900 transition-colors">About</a>
+          </nav>
         </div>
+      </header>
 
-        {/* Center Column: Main Form */}
-        <div className="flex flex-col items-center justify-center w-full max-w-xl mx-auto flex-1">
-          {/* FounderBrief Logo */}
-          <div className="flex items-center gap-2 mb-8 animate-pulse">
-            <span className="w-2.5 h-6 bg-amber rounded-full block"></span>
-            <span className="font-serif text-2xl font-bold text-ink tracking-tight select-none">
-              FounderBrief
-            </span>
+      {/* Main Content */}
+      <main className="flex-grow flex flex-col">
+        
+        {/* Hero & Search Section */}
+        <section className="pt-24 pb-20 px-6 text-center max-w-[1200px] mx-auto w-full">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 text-xs font-medium text-gray-600 mb-8 border border-gray-200">
+            <ShieldCheck className="w-3.5 h-3.5" /> Premium Business Intelligence
           </div>
-
-          {/* Hero Headings */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-ink leading-tight max-w-3xl">
+          
+          <h1 className="text-5xl md:text-[64px] font-extrabold text-gray-900 leading-[1.1] max-w-4xl mx-auto tracking-tight">
             Know Any Company In 30 Seconds
           </h1>
           
-          <p className="text-base md:text-lg text-stone mt-4 max-w-xl leading-relaxed">
-            AI-powered meeting intelligence tailored to your specific business goal.
+          <p className="text-lg md:text-xl text-gray-500 mt-6 max-w-2xl mx-auto leading-relaxed">
+            FounderBrief transforms hours of company research into actionable business intelligence and meeting preparation insights.
           </p>
 
-          {/* Form Container */}
+          <p className="text-sm text-gray-400 mt-4 max-w-2xl mx-auto">
+            Prepare for investor meetings, partnership discussions, vendor evaluations, sales conversations, and competitor research using AI-powered intelligence briefs.
+          </p>
+
+          {/* Search Form */}
           <form 
             onSubmit={handleSubmit} 
-            className="w-full max-w-xl mt-12 bg-white rounded-xl border border-chalk p-6 md:p-8 premium-shadow text-left"
+            className="w-full max-w-2xl mx-auto mt-12 bg-white rounded-2xl border border-gray-200 p-8 shadow-sm text-left relative z-10"
           >
             {/* Company Name / URL */}
             <div className="mb-6">
-              <label htmlFor="company" className="text-[11px] font-sans font-bold uppercase tracking-wider text-stone block mb-2">
+              <label htmlFor="company" className="text-xs font-semibold text-gray-700 block mb-2">
                 Company Name or URL
               </label>
-              <input
-                id="company"
-                ref={companyInputRef}
-                type="text"
-                placeholder="e.g. Stripe or stripe.com"
-                value={company}
-                onChange={(e) => {
-                  setCompany(e.target.value);
-                  if (e.target.value.trim()) setCompanyError('');
-                }}
-                className={`border rounded-lg px-4 py-3 bg-white w-full text-base transition-colors duration-200 outline-none ${
-                  companyError ? 'border-red-500 focus:border-red-500' : 'border-chalk focus:border-amber'
-                }`}
-              />
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  id="company"
+                  ref={companyInputRef}
+                  type="text"
+                  placeholder="e.g. Stripe or stripe.com"
+                  value={company}
+                  onChange={(e) => {
+                    setCompany(e.target.value);
+                    if (e.target.value.trim()) setCompanyError('');
+                  }}
+                  className={`pl-11 pr-4 py-3 bg-gray-50/50 border rounded-xl w-full text-sm transition-colors duration-200 outline-none ${
+                    companyError ? 'border-red-500 focus:bg-white focus:border-red-500 focus:ring-1 focus:ring-red-500' : 'border-gray-200 focus:bg-white focus:border-gray-900 focus:ring-1 focus:ring-gray-900 hover:border-gray-300'
+                  }`}
+                />
+              </div>
               {companyError && (
                 <span className="text-xs text-red-600 font-medium mt-1.5 block">
                   {companyError}
@@ -138,14 +139,14 @@ export default function SearchInput({ onSearch }) {
               )}
               
               {/* Suggestion Chips */}
-              <div className="mt-2.5 flex items-center gap-1.5 flex-wrap text-xs text-stone">
-                <span>Try:</span>
+              <div className="mt-3 flex items-center gap-2 flex-wrap text-xs text-gray-500">
+                <span className="font-medium">Try:</span>
                 {SUGGESTIONS.map((suggestion) => (
                   <button
                     key={suggestion}
                     type="button"
                     onClick={() => handleSuggestionClick(suggestion)}
-                    className="hover:text-amber font-medium transition-colors duration-150 underline decoration-chalk underline-offset-4 hover:decoration-amber/50 px-1 py-0.5 rounded"
+                    className="hover:text-gray-900 font-medium transition-colors duration-150 underline decoration-gray-200 underline-offset-4 hover:decoration-gray-400"
                   >
                     {suggestion}
                   </button>
@@ -153,31 +154,43 @@ export default function SearchInput({ onSearch }) {
               </div>
             </div>
 
-            {/* Research Purpose Textarea */}
-            <div className="mb-6 relative">
+            {/* Research Purpose */}
+            <div className="mb-8">
               <div className="flex justify-between items-baseline mb-2">
-                <label htmlFor="purpose" className="text-[11px] font-sans font-bold uppercase tracking-wider text-stone block">
+                <label htmlFor="purpose" className="text-xs font-semibold text-gray-700 block">
                   Research Purpose
                 </label>
-                <span className={`text-[10px] font-mono ${
-                  purpose.length > 500 ? 'text-red-500 font-bold' : 'text-stone'
+                <span className={`text-[10px] font-medium ${
+                  purpose.length > 500 ? 'text-red-500' : 'text-gray-400'
                 }`}>
                   {purpose.length}/500
                 </span>
               </div>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {Object.keys(PURPOSE_TEMPLATES).map((label) => (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => handlePillClick(label)}
+                    className="border border-gray-200 rounded-full px-3 py-1 text-xs text-gray-600 hover:border-gray-300 hover:bg-gray-50 active:scale-95 transition-all duration-200 select-none font-medium"
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
               
               <textarea
                 id="purpose"
-                placeholder="Why are you researching this company?&#10;&#10;Examples:&#10;• I want to explore a partnership opportunity.&#10;• I am preparing for an investor meeting.&#10;• I want to evaluate them as a vendor.&#10;• I need competitor intelligence.&#10;• I am preparing for a sales meeting."
+                placeholder="Why are you researching this company? (e.g., I am preparing for a partnership meeting to discuss API integration)"
                 value={purpose}
                 onChange={(e) => {
                   setPurpose(e.target.value);
                   if (e.target.value.trim()) setPurposeError('');
                 }}
-                rows={6}
+                rows={4}
                 maxLength={600}
-                className={`border rounded-lg px-4 py-3 bg-white w-full text-base transition-colors duration-200 outline-none resize-none leading-relaxed ${
-                  purposeError ? 'border-red-500 focus:border-red-500' : 'border-chalk focus:border-amber'
+                className={`px-4 py-3 bg-gray-50/50 border rounded-xl w-full text-sm transition-colors duration-200 outline-none resize-none leading-relaxed ${
+                  purposeError ? 'border-red-500 focus:bg-white focus:border-red-500 focus:ring-1 focus:ring-red-500' : 'border-gray-200 focus:bg-white focus:border-gray-900 focus:ring-1 focus:ring-gray-900 hover:border-gray-300'
                 }`}
               />
               {purposeError && (
@@ -187,39 +200,117 @@ export default function SearchInput({ onSearch }) {
               )}
             </div>
 
-            {/* Generate Button */}
             <button
               type="submit"
-              className="w-full bg-amber text-white font-semibold rounded-lg px-6 py-3.5 hover:opacity-90 active:scale-[0.99] transition-all duration-200 text-base"
+              className="w-full bg-gray-900 text-white font-medium rounded-xl px-6 py-3.5 hover:bg-gray-800 active:scale-[0.99] transition-all duration-200 text-sm shadow-sm flex items-center justify-center gap-2"
             >
-              Generate Brief →
+              Generate Intelligence Brief
+              <Zap className="w-4 h-4" />
             </button>
           </form>
+        </section>
 
-          {/* Used For Pills - Mobile/Tablet list under form (Below md) */}
-          <div className="md:hidden mt-12 w-full max-w-xl text-center">
-            <span className="text-[10px] font-sans font-bold uppercase tracking-widest text-stone block mb-4">
-              Used For
-            </span>
-            <div className="flex flex-wrap justify-center gap-2">
-              {Object.keys(PURPOSE_TEMPLATES).map((label) => (
-                <button
-                  key={label}
-                  type="button"
-                  onClick={() => handlePillClick(label)}
-                  className="border border-[#E5E2DB] rounded-full px-3 py-1 text-xs text-[#888480] hover:border-amber/50 hover:bg-paper active:scale-95 transition-all duration-200 select-none font-medium"
-                >
-                  {label}
-                </button>
-              ))}
+        {/* Features Section */}
+        <section id="features" className="py-20 bg-white border-y border-gray-100">
+          <div className="max-w-[1200px] mx-auto px-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {/* Feature 1 */}
+              <div className="p-6 rounded-2xl bg-[#FAFAFA] border border-gray-100">
+                <div className="w-10 h-10 bg-white border border-gray-200 rounded-xl flex items-center justify-center mb-4 shadow-sm">
+                  <Briefcase className="w-5 h-5 text-gray-700" />
+                </div>
+                <h3 className="text-base font-semibold text-gray-900 mb-2">Company Intelligence</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">Understand any company quickly with aggregated, high-quality data.</p>
+              </div>
+              
+              {/* Feature 2 */}
+              <div className="p-6 rounded-2xl bg-[#FAFAFA] border border-gray-100">
+                <div className="w-10 h-10 bg-white border border-gray-200 rounded-xl flex items-center justify-center mb-4 shadow-sm">
+                  <Target className="w-5 h-5 text-gray-700" />
+                </div>
+                <h3 className="text-base font-semibold text-gray-900 mb-2">Goal-Specific Insights</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">Research perfectly tailored to your objective, not generic summaries.</p>
+              </div>
+
+              {/* Feature 3 */}
+              <div className="p-6 rounded-2xl bg-[#FAFAFA] border border-gray-100">
+                <div className="w-10 h-10 bg-white border border-gray-200 rounded-xl flex items-center justify-center mb-4 shadow-sm">
+                  <FileText className="w-5 h-5 text-gray-700" />
+                </div>
+                <h3 className="text-base font-semibold text-gray-900 mb-2">Meeting Strategy</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">Receive actionable preparation guidance and intelligent questions to ask.</p>
+              </div>
+
+              {/* Feature 4 */}
+              <div className="p-6 rounded-2xl bg-[#FAFAFA] border border-gray-100">
+                <div className="w-10 h-10 bg-white border border-gray-200 rounded-xl flex items-center justify-center mb-4 shadow-sm">
+                  <ShieldCheck className="w-5 h-5 text-gray-700" />
+                </div>
+                <h3 className="text-base font-semibold text-gray-900 mb-2">Source Transparency</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">View all sources, confidence levels, and data quality notes to ensure trust.</p>
+              </div>
             </div>
           </div>
+        </section>
+
+        {/* How It Works Section */}
+        <section id="how-it-works" className="py-24 bg-[#FAFAFA]">
+          <div className="max-w-[1200px] mx-auto px-6 text-center">
+            <h2 className="text-3xl font-bold text-gray-900 mb-16 tracking-tight">How It Works</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
+              {/* Connecting Line (Desktop) */}
+              <div className="hidden md:block absolute top-8 left-[15%] right-[15%] h-px bg-gray-200 z-0"></div>
+              
+              {/* Step 1 */}
+              <div className="relative z-10 flex flex-col items-center">
+                <div className="w-16 h-16 bg-white border border-gray-200 rounded-2xl flex items-center justify-center mb-6 shadow-sm text-xl font-bold text-gray-900">
+                  1
+                </div>
+                <h3 className="text-base font-semibold text-gray-900 mb-2">Enter Company Name</h3>
+                <p className="text-sm text-gray-500">Provide the name or URL of the target company.</p>
+              </div>
+
+              {/* Step 2 */}
+              <div className="relative z-10 flex flex-col items-center">
+                <div className="w-16 h-16 bg-white border border-gray-200 rounded-2xl flex items-center justify-center mb-6 shadow-sm text-xl font-bold text-gray-900">
+                  2
+                </div>
+                <h3 className="text-base font-semibold text-gray-900 mb-2">Define Research Purpose</h3>
+                <p className="text-sm text-gray-500">Tell us what you want to achieve in your meeting.</p>
+              </div>
+
+              {/* Step 3 */}
+              <div className="relative z-10 flex flex-col items-center">
+                <div className="w-16 h-16 bg-gray-900 text-white rounded-2xl flex items-center justify-center mb-6 shadow-md text-xl font-bold">
+                  3
+                </div>
+                <h3 className="text-base font-semibold text-gray-900 mb-2">Generate Intelligence Brief</h3>
+                <p className="text-sm text-gray-500">Receive a polished, actionable report in 30 seconds.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-white border-t border-gray-100 py-12">
+        <div className="max-w-[1200px] mx-auto px-6 flex flex-col md:flex-row items-center justify-between">
+          <div className="flex items-center gap-2 mb-4 md:mb-0">
+            <div className="w-5 h-5 bg-gray-200 rounded flex items-center justify-center">
+              <Zap className="w-3 h-3 text-gray-500" />
+            </div>
+            <span className="text-sm font-semibold text-gray-900">FounderBrief</span>
+            <span className="text-xs text-gray-400 ml-2">© 2026</span>
+          </div>
+          
+          <div className="text-xs text-gray-500 text-center md:text-right">
+            Built by Team <span className="font-semibold text-gray-700">TheFirewallCrew</span><br/>
+            Karedia Uzair, Chougle Talha, Shaikh Amr, Shaikh Abdurrahman
+          </div>
         </div>
-
-        {/* Right Column: Desktop Spacer (for balance) */}
-        <div className="hidden md:block w-48"></div>
-
-      </div>
+      </footer>
     </div>
   );
 }
