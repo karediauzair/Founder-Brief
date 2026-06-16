@@ -12,28 +12,21 @@ Given a company name, the user's research purpose, and web search results about 
 WRITING STYLE RULES:
 - The report should feel like a professional consultant prepared it, a business analyst wrote it, or a meeting preparation document.
 - Keep the tone sophisticated, direct, and insight-dense (consulting brief style, not an AI chatbot response).
-- Avoid ChatGPT-style responses, excessive formatting, repetition, marketing language, and generic advice.
-- The output must be concise, actionable, and directly useful before a meeting.
+- Avoid ChatGPT-style responses, marketing language, and generic advice.
 
-CRITICAL:
-1. Reply ONLY with valid JSON. No markdown wrappers. No backticks. No explanation before or after. Just the raw JSON object.
+CRITICAL FORMATTING INSTRUCTIONS:
+1. Output MUST be a valid JSON object. Do NOT wrap it in markdown code blocks or add any other text outside the JSON.
 2. Adapt the analysis heavily based on the user's research purpose. Tailor the prioritization of details to match the specified goal.
-3. Do NOT write any chain-of-thought, reasoning, pre-text, introductions, or explanations. Do not write text out loud. Your response MUST begin exactly with '{' and end exactly with '}'.
-4. Every single key in the JSON must map to a string value. Do NOT use nested JSON arrays or JSON objects for any key.
-5. The JSON must have EXACTLY these 7 keys:
-
-{
-  "executiveSummary": "A concise overview (3-5 sentences) covering: what the company does, why it is relevant to the user's goal, the most important opportunity, and the most important risk.",
-  "companySnapshot": "Factual and concise details formatted as a single string with lines separated by \\n: Company Name, Industry, Headquarters, Founded Year, Employee Count (if available), Funding Stage (if available), Website, and a One-line company description.",
-  "businessOverview": "Core products, services, revenue model, target customers, and market positioning. Use simple language. Avoid long paragraphs. Format as a single string with points separated by \\n.",
-  "recentDevelopments": "3-5 recent developments formatted as a single string (NOT a JSON array) with items separated by \\n. Each item must contain a headline, short explanation, and source reference (e.g., '• Headline: Stripe Unveils New API Optimizations \\n  Explanation: Enhances developer experience... \\n  Source: [Source: TechCrunch]').",
-  "risks": "Market, competitive, operational, regulatory, and strategic concerns. Do not exaggerate. If confidence is low, clearly state uncertainty. Format as a single string (NOT a JSON array) with points separated by \\n.",
-  "goalSpecificIntelligence": "Contextual intelligence customized for the Research Purpose. Format as a single string with points separated by \\n.",
-  "meetingStrategy": "A single string (NOT a JSON object) structured exactly as follows using literal \\n for newlines:\\n### Focus On\\n• DISCUSSION_AREA_1: BRIEF_EXPLANATION\\n• DISCUSSION_AREA_2: BRIEF_EXPLANATION\\n... (3-5 areas)\\n\\n### Avoid\\n• TOPIC_TO_AVOID_1: BRIEF_EXPLANATION\\n... (topics/approaches to avoid)\\n\\n### Questions To Ask\\n• QUESTION_1\\n• QUESTION_2\\n... (5-8 thoughtful, non-generic, business-focused questions)\\n\\n### Potential Opportunity\\nSTRATEGIC_INSIGHT (2-4 sentences advice from business analyst)",
-  "confidenceScore": "A single integer between 1 and 100 representing the confidence in the research based on source quality, consistency, and completeness (e.g., 89).",
-  "dataQualityNotes": "A string explaining the confidence score and noting any conflicting information. Example: 'This report is based on 12 sources, including official company websites and industry publications. Confidence Level: High. No major conflicts detected.'",
-  "sourceBreakdown": "A JSON object with exactly these keys: 'official', 'news', 'industry', 'public', containing the integer count of sources for each category."
-}`;
+3. The JSON object MUST contain exactly these keys:
+   - "executiveSummary": Markdown string summarizing the company.
+   - "companySnapshot": Markdown string (Basic facts: Founding, Location, Size).
+   - "businessModel": Markdown string (How they make money).
+   - "meetingStrategy": Markdown string (Include Focus On, Avoid, Questions to Ask, Potential Opportunity based on the purpose).
+   - "opportunities": Markdown string.
+   - "risks": Markdown string (Red flags & risks).
+   - "confidenceScore": Integer between 1-100 indicating confidence in data.
+   - "dataQualityNotes": String noting any conflicting information or incomplete data.
+   - "sourceBreakdown": A JSON object with exactly these keys: 'official', 'news', 'industry', 'public', containing the integer count of sources for each category.`;
 
   const userMessage = `Company: ${company}
 User Research Purpose: ${purpose || "General company research and intelligence"}
@@ -41,44 +34,7 @@ User Research Purpose: ${purpose || "General company research and intelligence"}
 Search results:
 ${snippets}
 
-Generate the brief now. Return only JSON.`
-
-  // Function to escape unescaped control characters inside JSON string values
-  function escapeJsonStrings(str) {
-    let result = "";
-    let inString = false;
-    let escaped = false;
-    for (let i = 0; i < str.length; i++) {
-      const char = str[i];
-      if (char === '"' && !escaped) {
-        inString = !inString;
-        result += char;
-      } else if (inString) {
-        if (char === '\\' && !escaped) {
-          escaped = true;
-          result += char;
-        } else {
-          if (escaped) {
-            escaped = false;
-            result += char;
-          } else if (char === '\n') {
-            result += '\\n';
-          } else if (char === '\r') {
-            result += '\\r';
-          } else if (char === '\t') {
-            result += '\\t';
-          } else if (char.charCodeAt(0) < 32) {
-            result += '\\u' + char.charCodeAt(0).toString(16).padStart(4, '0');
-          } else {
-            result += char;
-          }
-        }
-      } else {
-        result += char;
-      }
-    }
-    return result;
-  }
+Generate the brief now. Return ONLY valid JSON.`;
 
   try {
     const modelsToTry = [
@@ -87,7 +43,7 @@ Generate the brief now. Return only JSON.`
       "openrouter/free"
     ];
 
-    let briefFromJson = null;
+    let briefMarkdown = null;
     let lastError = null;
     let chosenModel = "";
 
@@ -128,32 +84,19 @@ Generate the brief now. Return only JSON.`
 
       console.log(`[API Server] Model ${model} returned response preview: "${text.substring(0, 100)}..."`);
 
-      let jsonStr = text.trim();
-      if (jsonStr.startsWith('```json')) {
-        jsonStr = jsonStr.slice(7);
-      } else if (jsonStr.startsWith('```')) {
-        jsonStr = jsonStr.slice(3);
+      let mdStr = text.trim();
+      if (mdStr.startsWith('```json')) {
+        mdStr = mdStr.slice(7);
+      } else if (mdStr.startsWith('```')) {
+        mdStr = mdStr.slice(3);
       }
-      if (jsonStr.endsWith('```')) {
-        jsonStr = jsonStr.slice(0, -3);
+      if (mdStr.endsWith('```')) {
+        mdStr = mdStr.slice(0, -3);
       }
-      jsonStr = jsonStr.trim();
+      mdStr = mdStr.trim();
 
-      const firstBrace = jsonStr.indexOf('{');
-      const lastBrace = jsonStr.lastIndexOf('}');
-      if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
-        jsonStr = jsonStr.substring(firstBrace, lastBrace + 1);
-      }
-
-      const cleanedJsonStr = escapeJsonStrings(jsonStr);
-      const parsed = JSON.parse(cleanedJsonStr);
-
-      // Simple validation of parsed keys
-      if (!parsed.executiveSummary && !parsed.companySnapshot) {
-        throw new Error("Parsed JSON lacks required fields (executiveSummary / companySnapshot)");
-      }
-
-      briefFromJson = parsed;
+      // Ensure it's valid JSON
+      briefMarkdown = JSON.parse(mdStr);
       chosenModel = model;
       break; // Success! Exit loop.
     } catch (err) {
@@ -162,7 +105,7 @@ Generate the brief now. Return only JSON.`
     }
   }
 
-  if (!briefFromJson) {
+  if (!briefMarkdown) {
     const status = lastError?.status || 500;
     const detail = lastError?.text || "All attempts to generate brief failed";
     console.error(`[API Server] All models failed. Returning error status ${status}:`, detail);
@@ -172,7 +115,7 @@ Generate the brief now. Return only JSON.`
   console.log(`[API Server] Successfully generated brief using model: ${chosenModel}`);
 
   const brief = {
-    ...briefFromJson,
+    ...briefMarkdown,
     sources: sources || []
   };
 
