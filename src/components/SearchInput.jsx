@@ -85,61 +85,56 @@ export default function SearchInput({ onSearch }) {
       </header>
 
       {/* Main Content */}
-      <main className="flex-grow flex flex-col">
+      <main className="flex-1 flex flex-col items-center justify-start pt-16 px-4">
         
-        {/* Hero & Search Section */}
-        <section className="pt-24 pb-20 px-6 text-center max-w-[1200px] mx-auto w-full">
+        {/* Hero Section */}
+        <div className="text-center max-w-3xl mb-12 fade-in">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 text-xs font-medium text-gray-600 mb-8 border border-gray-200">
             <ShieldCheck className="w-3.5 h-3.5" /> Premium Business Intelligence
           </div>
-          
-          <h1 className="text-5xl md:text-[64px] font-extrabold text-gray-900 leading-[1.1] max-w-4xl mx-auto tracking-tight">
-            Know Any Company In 30 Seconds
+          <h1 className="text-5xl md:text-[64px] font-extrabold text-gray-900 tracking-tight mb-6 leading-tight">
+            Know Any Company <br className="md:hidden" />
+            <span className="text-blue-600">In 30 Seconds</span>
           </h1>
-          
-          <p className="text-lg md:text-xl text-gray-500 mt-6 max-w-2xl mx-auto leading-relaxed">
-            FounderBrief transforms hours of company research into actionable business intelligence and meeting preparation insights.
+          <p className="text-lg md:text-xl text-gray-600 mb-4 max-w-2xl mx-auto leading-relaxed">
+            AI-powered meeting intelligence for founders, investors, consultants, and operators.
           </p>
-
-          <p className="text-sm text-gray-400 mt-4 max-w-2xl mx-auto">
-            Prepare for investor meetings, partnership discussions, vendor evaluations, sales conversations, and competitor research using AI-powered intelligence briefs.
+          <p className="text-sm text-gray-500 max-w-xl mx-auto leading-relaxed">
+            Turn hours of company research into actionable meeting preparation, strategic insights, and decision-ready intelligence.
           </p>
+        </div>
 
-          {/* Search Form */}
-          <form 
-            onSubmit={handleSubmit} 
-            className="w-full max-w-2xl mx-auto mt-12 bg-white rounded-2xl border border-gray-200 p-8 shadow-sm text-left relative z-10"
-          >
-            {/* Company Name / URL */}
+        {/* Main Search Card */}
+        <div className="w-full max-w-2xl bg-white rounded-2xl p-8 md:p-10 border border-gray-200 shadow-sm fade-in relative z-10" style={{ animationDelay: '100ms' }}>
+          <form onSubmit={handleSubmit}>
+            
+            {/* Company Name */}
             <div className="mb-6">
               <label htmlFor="company" className="text-xs font-semibold text-gray-700 block mb-2">
                 Company Name or URL
               </label>
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <div className="relative flex items-center">
+                <Search className="w-5 h-5 text-gray-400 absolute left-4" />
                 <input
                   id="company"
                   ref={companyInputRef}
                   type="text"
-                  placeholder="e.g. Stripe or stripe.com"
+                  placeholder="e.g., Notion, Stripe, or notion.so"
                   value={company}
                   onChange={(e) => {
                     setCompany(e.target.value);
                     if (e.target.value.trim()) setCompanyError('');
                   }}
-                  className={`pl-11 pr-4 py-3 bg-gray-50/50 border rounded-xl w-full text-sm transition-colors duration-200 outline-none ${
-                    companyError ? 'border-red-500 focus:bg-white focus:border-red-500 focus:ring-1 focus:ring-red-500' : 'border-gray-200 focus:bg-white focus:border-gray-900 focus:ring-1 focus:ring-gray-900 hover:border-gray-300'
+                  className={`pl-12 pr-4 py-3 bg-gray-50/50 border rounded-xl w-full text-sm md:text-base font-medium transition-colors duration-200 outline-none ${
+                    companyError ? 'border-red-300 focus:border-red-500 bg-red-50/20' : 'border-gray-200 focus:border-blue-500 focus:bg-white'
                   }`}
+                  autoComplete="off"
+                  spellCheck="false"
                 />
               </div>
-              {companyError && (
-                <span className="text-xs text-red-600 font-medium mt-1.5 block">
-                  {companyError}
-                </span>
-              )}
+              {companyError && <p className="text-red-500 text-xs mt-2 font-medium">{companyError}</p>}
               
-              {/* Suggestion Chips */}
-              <div className="mt-3 flex items-center gap-2 flex-wrap text-xs text-gray-500">
+              <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-gray-400">
                 <span className="font-medium">Try:</span>
                 {SUGGESTIONS.map((suggestion) => (
                   <button
@@ -166,18 +161,6 @@ export default function SearchInput({ onSearch }) {
                   {purpose.length}/500
                 </span>
               </div>
-              <div className="flex flex-wrap gap-2 mb-4">
-                {Object.keys(PURPOSE_TEMPLATES).map((label) => (
-                  <button
-                    key={label}
-                    type="button"
-                    onClick={() => handlePillClick(label)}
-                    className="border border-gray-200 rounded-full px-3 py-1 text-xs text-gray-600 hover:border-gray-300 hover:bg-gray-50 active:scale-95 transition-all duration-200 select-none font-medium"
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
               
               <textarea
                 id="purpose"
@@ -190,124 +173,172 @@ export default function SearchInput({ onSearch }) {
                 rows={4}
                 maxLength={600}
                 className={`px-4 py-3 bg-gray-50/50 border rounded-xl w-full text-sm transition-colors duration-200 outline-none resize-none leading-relaxed ${
-                  purposeError ? 'border-red-500 focus:bg-white focus:border-red-500 focus:ring-1 focus:ring-red-500' : 'border-gray-200 focus:bg-white focus:border-gray-900 focus:ring-1 focus:ring-gray-900 hover:border-gray-300'
+                  purposeError ? 'border-red-300 focus:border-red-500 bg-red-50/20' : 'border-gray-200 focus:border-blue-500 focus:bg-white'
                 }`}
               />
-              {purposeError && (
-                <span className="text-xs text-red-600 font-medium mt-1 block">
-                  {purposeError}
-                </span>
-              )}
+              {purposeError && <p className="text-red-500 text-xs mt-2 font-medium">{purposeError}</p>}
             </div>
 
             <button
               type="submit"
-              className="w-full bg-gray-900 text-white font-medium rounded-xl px-6 py-3.5 hover:bg-gray-800 active:scale-[0.99] transition-all duration-200 text-sm shadow-sm flex items-center justify-center gap-2"
+              className="w-full bg-gray-900 text-white rounded-xl py-3.5 md:py-4 px-6 font-semibold text-sm md:text-base hover:bg-gray-800 transition-all duration-200 active:scale-[0.99] flex items-center justify-center gap-2"
             >
               Generate Intelligence Brief
               <Zap className="w-4 h-4" />
             </button>
           </form>
-        </section>
+        </div>
 
-        {/* Features Section */}
-        <section id="features" className="py-20 bg-white border-y border-gray-100">
-          <div className="max-w-[1200px] mx-auto px-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {/* Feature 1 */}
-              <div className="p-6 rounded-2xl bg-[#FAFAFA] border border-gray-100">
-                <div className="w-10 h-10 bg-white border border-gray-200 rounded-xl flex items-center justify-center mb-4 shadow-sm">
-                  <Briefcase className="w-5 h-5 text-gray-700" />
-                </div>
-                <h3 className="text-base font-semibold text-gray-900 mb-2">Company Intelligence</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">Understand any company quickly with aggregated, high-quality data.</p>
-              </div>
-              
-              {/* Feature 2 */}
-              <div className="p-6 rounded-2xl bg-[#FAFAFA] border border-gray-100">
-                <div className="w-10 h-10 bg-white border border-gray-200 rounded-xl flex items-center justify-center mb-4 shadow-sm">
-                  <Target className="w-5 h-5 text-gray-700" />
-                </div>
-                <h3 className="text-base font-semibold text-gray-900 mb-2">Goal-Specific Insights</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">Research perfectly tailored to your objective, not generic summaries.</p>
-              </div>
-
-              {/* Feature 3 */}
-              <div className="p-6 rounded-2xl bg-[#FAFAFA] border border-gray-100">
-                <div className="w-10 h-10 bg-white border border-gray-200 rounded-xl flex items-center justify-center mb-4 shadow-sm">
-                  <FileText className="w-5 h-5 text-gray-700" />
-                </div>
-                <h3 className="text-base font-semibold text-gray-900 mb-2">Meeting Strategy</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">Receive actionable preparation guidance and intelligent questions to ask.</p>
-              </div>
-
-              {/* Feature 4 */}
-              <div className="p-6 rounded-2xl bg-[#FAFAFA] border border-gray-100">
-                <div className="w-10 h-10 bg-white border border-gray-200 rounded-xl flex items-center justify-center mb-4 shadow-sm">
-                  <ShieldCheck className="w-5 h-5 text-gray-700" />
-                </div>
-                <h3 className="text-base font-semibold text-gray-900 mb-2">Source Transparency</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">View all sources, confidence levels, and data quality notes to ensure trust.</p>
-              </div>
-            </div>
+        {/* Small Trust Section / Quick Select */}
+        <div className="mt-8 text-center max-w-2xl w-full fade-in" style={{ animationDelay: '200ms' }}>
+          <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 block mb-3">
+            Used For
+          </span>
+          <div className="flex flex-wrap justify-center gap-2">
+            {Object.keys(PURPOSE_TEMPLATES).map((label) => (
+              <button
+                key={label}
+                type="button"
+                onClick={() => handlePillClick(label)}
+                className="px-4 py-1.5 rounded-full border border-gray-200 bg-white text-xs font-medium text-gray-600 hover:border-gray-300 hover:text-gray-900 transition-colors"
+              >
+                {label}
+              </button>
+            ))}
           </div>
-        </section>
-
-        {/* How It Works Section */}
-        <section id="how-it-works" className="py-24 bg-[#FAFAFA]">
-          <div className="max-w-[1200px] mx-auto px-6 text-center">
-            <h2 className="text-3xl font-bold text-gray-900 mb-16 tracking-tight">How It Works</h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
-              {/* Connecting Line (Desktop) */}
-              <div className="hidden md:block absolute top-8 left-[15%] right-[15%] h-px bg-gray-200 z-0"></div>
-              
-              {/* Step 1 */}
-              <div className="relative z-10 flex flex-col items-center">
-                <div className="w-16 h-16 bg-white border border-gray-200 rounded-2xl flex items-center justify-center mb-6 shadow-sm text-xl font-bold text-gray-900">
-                  1
-                </div>
-                <h3 className="text-base font-semibold text-gray-900 mb-2">Enter Company Name</h3>
-                <p className="text-sm text-gray-500">Provide the name or URL of the target company.</p>
-              </div>
-
-              {/* Step 2 */}
-              <div className="relative z-10 flex flex-col items-center">
-                <div className="w-16 h-16 bg-white border border-gray-200 rounded-2xl flex items-center justify-center mb-6 shadow-sm text-xl font-bold text-gray-900">
-                  2
-                </div>
-                <h3 className="text-base font-semibold text-gray-900 mb-2">Define Research Purpose</h3>
-                <p className="text-sm text-gray-500">Tell us what you want to achieve in your meeting.</p>
-              </div>
-
-              {/* Step 3 */}
-              <div className="relative z-10 flex flex-col items-center">
-                <div className="w-16 h-16 bg-gray-900 text-white rounded-2xl flex items-center justify-center mb-6 shadow-md text-xl font-bold">
-                  3
-                </div>
-                <h3 className="text-base font-semibold text-gray-900 mb-2">Generate Intelligence Brief</h3>
-                <p className="text-sm text-gray-500">Receive a polished, actionable report in 30 seconds.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
+        </div>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-white border-t border-gray-100 py-12">
-        <div className="max-w-[1200px] mx-auto px-6 flex flex-col md:flex-row items-center justify-between">
-          <div className="flex items-center gap-2 mb-4 md:mb-0">
-            <div className="w-5 h-5 bg-gray-200 rounded flex items-center justify-center">
-              <Zap className="w-3 h-3 text-gray-500" />
-            </div>
-            <span className="text-sm font-semibold text-gray-900">FounderBrief</span>
-            <span className="text-xs text-gray-400 ml-2">© 2026</span>
+      {/* Feature Highlights */}
+      <section id="features" className="py-20 bg-white border-y border-gray-100">
+        <div className="max-w-[1200px] mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Everything you need to prepare</h2>
+            <p className="text-gray-500 mt-4 max-w-2xl mx-auto">Get complete context on any company before your next big meeting.</p>
           </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="p-6 rounded-2xl bg-[#FAFAFA] border border-gray-100 text-center flex flex-col items-center">
+              <div className="w-12 h-12 bg-blue-50 border border-blue-100 rounded-xl flex items-center justify-center mb-4 shadow-sm text-blue-600">
+                <Briefcase className="w-6 h-6" />
+              </div>
+              <h3 className="text-base font-semibold text-gray-900 mb-2">Company Intelligence</h3>
+              <p className="text-sm text-gray-500 leading-relaxed">Understand any company quickly with aggregated, high-quality data.</p>
+            </div>
+            
+            <div className="p-6 rounded-2xl bg-[#FAFAFA] border border-gray-100 text-center flex flex-col items-center">
+              <div className="w-12 h-12 bg-purple-50 border border-purple-100 rounded-xl flex items-center justify-center mb-4 shadow-sm text-purple-600">
+                <Target className="w-6 h-6" />
+              </div>
+              <h3 className="text-base font-semibold text-gray-900 mb-2">Goal-Specific Insights</h3>
+              <p className="text-sm text-gray-500 leading-relaxed">Research tailored exactly to your objective, not generic summaries.</p>
+            </div>
+
+            <div className="p-6 rounded-2xl bg-[#FAFAFA] border border-gray-100 text-center flex flex-col items-center">
+              <div className="w-12 h-12 bg-orange-50 border border-orange-100 rounded-xl flex items-center justify-center mb-4 shadow-sm text-orange-600">
+                <FileText className="w-6 h-6" />
+              </div>
+              <h3 className="text-base font-semibold text-gray-900 mb-2">Meeting Strategy</h3>
+              <p className="text-sm text-gray-500 leading-relaxed">Actionable preparation guidance and intelligent questions to ask.</p>
+            </div>
+
+            <div className="p-6 rounded-2xl bg-[#FAFAFA] border border-gray-100 text-center flex flex-col items-center">
+              <div className="w-12 h-12 bg-green-50 border border-green-100 rounded-xl flex items-center justify-center mb-4 shadow-sm text-green-600">
+                <ShieldCheck className="w-6 h-6" />
+              </div>
+              <h3 className="text-base font-semibold text-gray-900 mb-2">Source Transparency</h3>
+              <p className="text-sm text-gray-500 leading-relaxed">Every insight is backed by cited sources and checked for data quality.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section id="how-it-works" className="py-24 bg-[#FAFAFA]">
+        <div className="max-w-[1200px] mx-auto px-6 text-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-16 tracking-tight">How It Works</h2>
           
-          <div className="text-xs text-gray-500 text-center md:text-right">
-            Built by Team <span className="font-semibold text-gray-700">TheFirewallCrew</span><br/>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
+            <div className="hidden md:block absolute top-8 left-[15%] right-[15%] h-px bg-gray-200 z-0"></div>
+            
+            <div className="relative z-10 flex flex-col items-center">
+              <div className="w-16 h-16 bg-white border border-gray-200 rounded-2xl flex items-center justify-center mb-6 shadow-sm text-xl font-bold text-gray-900">
+                1
+              </div>
+              <h3 className="text-base font-semibold text-gray-900 mb-2">Enter Company Name</h3>
+              <p className="text-sm text-gray-500">Provide the name or URL of the target company.</p>
+            </div>
+
+            <div className="relative z-10 flex flex-col items-center">
+              <div className="w-16 h-16 bg-white border border-gray-200 rounded-2xl flex items-center justify-center mb-6 shadow-sm text-xl font-bold text-gray-900">
+                2
+              </div>
+              <h3 className="text-base font-semibold text-gray-900 mb-2">Define Research Purpose</h3>
+              <p className="text-sm text-gray-500">Tell us what you want to achieve in your meeting.</p>
+            </div>
+
+            <div className="relative z-10 flex flex-col items-center">
+              <div className="w-16 h-16 bg-gray-900 text-white rounded-2xl flex items-center justify-center mb-6 shadow-md text-xl font-bold">
+                3
+              </div>
+              <h3 className="text-base font-semibold text-gray-900 mb-2">Generate Intelligence Brief</h3>
+              <p className="text-sm text-gray-500">Receive a polished, actionable report in 30 seconds.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Upcoming Features */}
+      <section id="upcoming" className="py-20 bg-white border-t border-gray-100">
+        <div className="max-w-[800px] mx-auto px-6 text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-xs font-medium text-blue-600 mb-8 border border-blue-100">
+            <Zap className="w-3.5 h-3.5" /> Coming Soon
+          </div>
+          <h2 className="text-3xl font-bold text-gray-900 tracking-tight mb-8">What's Next for FounderBrief</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+            <div className="p-5 border border-gray-100 rounded-xl bg-[#FAFAFA]">
+              <h4 className="font-semibold text-gray-900 mb-1">CRM Integration</h4>
+              <p className="text-sm text-gray-500">Automatically sync briefs to Salesforce and HubSpot.</p>
+            </div>
+            <div className="p-5 border border-gray-100 rounded-xl bg-[#FAFAFA]">
+              <h4 className="font-semibold text-gray-900 mb-1">Team Collaboration</h4>
+              <p className="text-sm text-gray-500">Share briefs with your team and add private notes.</p>
+            </div>
+            <div className="p-5 border border-gray-100 rounded-xl bg-[#FAFAFA]">
+              <h4 className="font-semibold text-gray-900 mb-1">Automated Monitoring</h4>
+              <p className="text-sm text-gray-500">Get alerts when a target company has major news.</p>
+            </div>
+            <div className="p-5 border border-gray-100 rounded-xl bg-[#FAFAFA]">
+              <h4 className="font-semibold text-gray-900 mb-1">Export to Notion</h4>
+              <p className="text-sm text-gray-500">1-click export to your existing Notion workspaces.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="w-full max-w-[1200px] mx-auto py-12 px-6 mt-20 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="flex flex-col items-center md:items-start text-center md:text-left">
+          <div className="flex items-center gap-2 mb-2">
+            <Zap className="w-4 h-4 text-blue-600" />
+            <span className="font-bold text-gray-900 tracking-tight">FounderBrief</span>
+          </div>
+          <p className="text-xs text-gray-500 max-w-xs">
+            AI-Powered Meeting Intelligence Platform
+          </p>
+          <p className="text-[10px] text-gray-400 mt-4">
+            &copy; 2026 FounderBrief. All rights reserved.
+          </p>
+        </div>
+        
+        <div className="flex flex-col items-center md:items-end text-center md:text-right">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Built By Team Firewall Crew</p>
+          <p className="text-xs font-semibold text-gray-700 mb-1">Team Members:</p>
+          <p className="text-[11px] text-gray-500 mb-4 max-w-[200px]">
             Karedia Uzair, Chougle Talha, Shaikh Amr, Shaikh Abdurrahman
+          </p>
+          <div className="flex gap-4">
+            <a href="#" className="text-xs text-gray-400 hover:text-gray-900 font-medium transition-colors">GitHub</a>
+            <a href="#" className="text-xs text-gray-400 hover:text-gray-900 font-medium transition-colors">Live Demo</a>
           </div>
         </div>
       </footer>
