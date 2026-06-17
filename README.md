@@ -9,9 +9,7 @@
 
 **Website:** https://founder-brief-lime.vercel.app/
 
-## 🎥 Demo Video
 
-[Add YouTube Demo Link Here]
 
 The demo showcases:
 
