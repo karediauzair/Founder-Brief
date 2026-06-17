@@ -28,18 +28,10 @@ export default function LoadingScreen({
   onTransitionToResult,
   onTransitionToError
 }) {
-  const [elapsedTime, setElapsedTime] = useState(0);
   const [allDone, setAllDone] = useState(false);
   const [messageIndex, setMessageIndex] = useState(0);
-
-  // 1. Core clock timer
-  useEffect(() => {
-    const start = Date.now();
-    const interval = setInterval(() => {
-      setElapsedTime(Date.now() - start);
-    }, 100);
-    return () => clearInterval(interval);
-  }, []);
+  const [activeStepIndex, setActiveStepIndex] = useState(0);
+  const [fastForward, setFastForward] = useState(false);
 
   // Rotating messages timer
   useEffect(() => {
@@ -49,43 +41,52 @@ export default function LoadingScreen({
     return () => clearInterval(messageInterval);
   }, []);
 
-  // 2. Logic to coordinate step states and transitions
+  // Fast forward trigger
   useEffect(() => {
-    let activeStepIndex = 0;
-    for (let i = 0; i < STEP_TIMINGS.length; i++) {
-      if (elapsedTime >= STEP_TIMINGS[i]) {
-        activeStepIndex = i;
-      }
+    if (apiFinished && !fastForward) {
+      setFastForward(true);
     }
+  }, [apiFinished, fastForward]);
 
-    const isLongerThan15s = elapsedTime >= 15000;
+  // Natural progression logic (handles both normal and fast-forward speeds)
+  useEffect(() => {
+    if (allDone) return;
 
-    if (isLongerThan15s) {
-      if (!allDone) setAllDone(true);
+    if (activeStepIndex >= steps.length - 1) {
+      // Reached the end of steps, wait for API to finish
       if (apiFinished) {
-        if (apiError) onTransitionToError(apiError);
-        else if (pendingBrief) onTransitionToResult(pendingBrief);
+        setAllDone(true);
       }
       return;
     }
 
-    // Move ahead faster if API finished early, but ensure we show at least some progress
-    if (apiFinished && activeStepIndex >= 4) {
-      if (!allDone) {
-        setAllDone(true);
-        const timer = setTimeout(() => {
-          if (apiError) onTransitionToError(apiError);
-          else if (pendingBrief) onTransitionToResult(pendingBrief);
-        }, 800);
-        return () => clearTimeout(timer);
-      }
+    // Determine delay based on mode
+    let delay;
+    if (fastForward) {
+      // Fast forward takes 200ms-500ms per step
+      delay = Math.floor(Math.random() * 300) + 200;
+    } else {
+      // Natural progression takes 1000ms-2500ms per step
+      delay = Math.floor(Math.random() * 1500) + 1000;
     }
-  }, [elapsedTime, apiFinished, pendingBrief, apiError, allDone, onTransitionToResult, onTransitionToError]);
 
-  let activeStepIndex = 0;
-  for (let i = 0; i < STEP_TIMINGS.length; i++) {
-    if (elapsedTime >= STEP_TIMINGS[i]) activeStepIndex = i;
-  }
+    const timer = setTimeout(() => {
+      setActiveStepIndex(prev => prev + 1);
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, [activeStepIndex, fastForward, allDone, apiFinished]);
+
+  // Transition logic
+  useEffect(() => {
+    if (allDone) {
+      const timer = setTimeout(() => {
+        if (apiError) onTransitionToError(apiError);
+        else if (pendingBrief) onTransitionToResult(pendingBrief);
+      }, 500); 
+      return () => clearTimeout(timer);
+    }
+  }, [allDone, apiError, pendingBrief, onTransitionToError, onTransitionToResult]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[90vh] px-4 font-sans text-left animate-fade-in bg-[#FAFAFA]">
@@ -143,21 +144,7 @@ export default function LoadingScreen({
             );
           })}
         </div>
-        {/* ETA Progress */}
-        <div className="mt-8 pt-6 border-t border-gray-100">
-          <div className="flex justify-between items-center text-xs text-gray-500 mb-2">
-            <span>Estimated completion</span>
-            <span className="font-medium text-gray-900">
-              ~{Math.max(0, Math.ceil((15000 - elapsedTime) / 1000))}s remaining
-            </span>
-          </div>
-          <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-blue-600 rounded-full transition-all duration-300 ease-out"
-              style={{ width: `${Math.min(100, (elapsedTime / 15000) * 100)}%` }}
-            ></div>
-          </div>
-        </div>
+
       </div>
     </div>
   );

@@ -1,0 +1,19 @@
+Enhance UI layouts, fix API fallbacks, and optimize PDF generation
+
+- src/components/LoadingScreen.jsx:
+  Separated artificial progression logic from transition logic to resolve an issue where the React timer was being prematurely cancelled on re-renders, preventing the success screen from appearing. Added dynamic, organic loading delays.
+
+- api/brief.js:
+  Refactored OpenRouter backend to use updated free models (Gemma 4, Nemotron) to fix silent upstream 429 and 404 errors. Re-adjusted fetch timeouts to 30s to allow larger language models adequate response time.
+
+- src/components/BriefCard.jsx:
+  Upgraded Markdown parsing algorithm in the strategy sections to gracefully detect and style asterisk-wrapped bold headers (e.g. **Focus On:**) instead of rendering them incorrectly as bulleted lists. Added the CSS `break-inside-avoid` utility class to root containers to prevent structural slicing.
+
+- src/components/BriefOutput.jsx:
+  Configured `html2pdf.js` pagebreak properties to explicitly respect CSS-based pagination parameters `['css', 'legacy']`, guaranteeing UI cards remain intact across page breaks without arbitrary truncation during PDF exports.
+
+- src/components/SearchInput.jsx:
+  Integrated local-storage backed dynamic "Recent Searches" history list. Upgraded header layout semantics with precise logo sizing and link reorganizations (replaced "About" with "What's Next").
+
+- index.html & public/:
+  Injected dynamic company icon and high-resolution logo assets to replace generic branding, and updated document headers.

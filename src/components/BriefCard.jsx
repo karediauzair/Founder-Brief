@@ -42,25 +42,35 @@ export default function BriefCard({ label, content, isStrategy, isNotes, isConfi
 
     // 1. Specialized Rendering for Sources Transparency
     if (isSources) {
+      const calculatedBreakdown = { official: 0, news: 0, industry: 0, public: 0 };
+      if (Array.isArray(content)) {
+        content.forEach(src => {
+          const { type } = getSourceType(src.link);
+          if (type === "Official Website") calculatedBreakdown.official++;
+          else if (type === "News Publication") calculatedBreakdown.news++;
+          else if (type === "Industry Report") calculatedBreakdown.industry++;
+          else calculatedBreakdown.public++;
+        });
+      }
+      const breakdownToUse = calculatedBreakdown;
+
       return (
         <div className="mt-5">
           {/* Source Breakdown summary if available */}
-          {sourceBreakdown && (
-            <div className="flex flex-wrap gap-3 mb-6 p-4 bg-gray-50 rounded-xl border border-gray-100">
-              <div className="flex items-center gap-2 text-xs font-medium text-gray-700 bg-white px-3 py-1.5 rounded-lg border border-gray-200">
-                <Globe className="w-3.5 h-3.5 text-blue-600" /> Official: {sourceBreakdown.official || 0}
-              </div>
-              <div className="flex items-center gap-2 text-xs font-medium text-gray-700 bg-white px-3 py-1.5 rounded-lg border border-gray-200">
-                <Newspaper className="w-3.5 h-3.5 text-purple-600" /> News: {sourceBreakdown.news || 0}
-              </div>
-              <div className="flex items-center gap-2 text-xs font-medium text-gray-700 bg-white px-3 py-1.5 rounded-lg border border-gray-200">
-                <Briefcase className="w-3.5 h-3.5 text-orange-600" /> Industry: {sourceBreakdown.industry || 0}
-              </div>
-              <div className="flex items-center gap-2 text-xs font-medium text-gray-700 bg-white px-3 py-1.5 rounded-lg border border-gray-200">
-                <Database className="w-3.5 h-3.5 text-green-600" /> Public/Other: {sourceBreakdown.public || 0}
-              </div>
+          <div className="flex flex-wrap gap-3 mb-6 p-4 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="flex items-center gap-2 text-xs font-medium text-gray-700 bg-white px-3 py-1.5 rounded-lg border border-gray-200">
+              <Globe className="w-3.5 h-3.5 text-blue-600" /> Official: {breakdownToUse.official}
             </div>
-          )}
+            <div className="flex items-center gap-2 text-xs font-medium text-gray-700 bg-white px-3 py-1.5 rounded-lg border border-gray-200">
+              <Newspaper className="w-3.5 h-3.5 text-purple-600" /> News: {breakdownToUse.news}
+            </div>
+            <div className="flex items-center gap-2 text-xs font-medium text-gray-700 bg-white px-3 py-1.5 rounded-lg border border-gray-200">
+              <Briefcase className="w-3.5 h-3.5 text-orange-600" /> Industry: {breakdownToUse.industry}
+            </div>
+            <div className="flex items-center gap-2 text-xs font-medium text-gray-700 bg-white px-3 py-1.5 rounded-lg border border-gray-200">
+              <Database className="w-3.5 h-3.5 text-green-600" /> Public/Other: {breakdownToUse.public}
+            </div>
+          </div>
 
           {Array.isArray(content) && content.length > 0 ? (
             <div className="grid grid-cols-1 gap-3">
@@ -124,9 +134,31 @@ export default function BriefCard({ label, content, isStrategy, isNotes, isConfi
           {items.map((item, idx) => {
             const trimmed = item.trim();
             
-            // Markdown-style headers
+            // Detect headers
+            let headerText = null;
             if (trimmed.startsWith('###')) {
-              const headerText = trimmed.replace(/^###\s*/, '').trim();
+              headerText = trimmed.replace(/^###\s*/, '').replace(/\*+/g, '').replace(/:$/, '').trim();
+            } else if (trimmed.match(/^\*+[^*]+\*+:?$/)) {
+              headerText = trimmed.replace(/\*/g, '').replace(/:$/, '').trim();
+            } else if (isStrategy && trimmed.length < 40 && trimmed.endsWith(':') && !trimmed.includes('- ')) {
+              headerText = trimmed.replace(/:$/, '').replace(/\*/g, '').trim();
+            }
+            
+            // Workaround for malformed AI output like `*Focus On:**`
+            if (!headerText && isStrategy && trimmed.toLowerCase().includes('focus on') && trimmed.length < 30) {
+              headerText = "Focus On";
+            }
+            if (!headerText && isStrategy && trimmed.toLowerCase().includes('avoid') && trimmed.length < 30 && !trimmed.startsWith('-')) {
+              headerText = "Avoid";
+            }
+            if (!headerText && isStrategy && trimmed.toLowerCase().includes('question') && trimmed.length < 30 && !trimmed.startsWith('-')) {
+              headerText = "Questions to Ask";
+            }
+            if (!headerText && isStrategy && trimmed.toLowerCase().includes('opportunity') && trimmed.length < 30 && !trimmed.startsWith('-')) {
+              headerText = "Potential Opportunity";
+            }
+
+            if (headerText) {
               let headerColor = "text-gray-900 border-gray-200";
               let HeaderIcon = null;
               
@@ -156,8 +188,8 @@ export default function BriefCard({ label, content, isStrategy, isNotes, isConfi
               );
             }
 
-            const cleanItem = item.replace(/^[-*•\d.]\s*/, '').trim();
-            const isListItem = item.trim().startsWith('-') || item.trim().startsWith('•') || item.trim().startsWith('*') || item.trim().match(/^\d+\./);
+            const cleanItem = trimmed.replace(/^[-*•\d.]\s*/, '').replace(/\*/g, '').trim();
+            const isListItem = trimmed.startsWith('-') || trimmed.startsWith('•') || trimmed.startsWith('*') || trimmed.match(/^\d+\./);
             
             if (!isListItem && !isStrategy) {
               return (
@@ -166,6 +198,8 @@ export default function BriefCard({ label, content, isStrategy, isNotes, isConfi
                 </p>
               );
             }
+
+            if (!cleanItem) return null; // Skip empty list items
 
             return (
               <div key={idx} className={`flex items-start text-gray-700 text-sm md:text-[15px] leading-relaxed ${isStrategy ? 'mb-3 bg-gray-50/50 p-3 rounded-lg border border-gray-100' : ''}`}>
@@ -190,7 +224,7 @@ export default function BriefCard({ label, content, isStrategy, isNotes, isConfi
 
   return (
     <div 
-      className={`h-full flex flex-col border border-gray-200 shadow-sm rounded-2xl p-6 md:p-8 ${
+      className={`h-full flex flex-col border border-gray-200 shadow-sm rounded-2xl p-6 md:p-8 break-inside-avoid ${
         isStrategy ? 'bg-white ring-1 ring-gray-900/5' : 'bg-white'
       }`}
     >

@@ -9,17 +9,17 @@ export default function BriefOutput({ brief, company, purpose, onReset }) {
 
   const confidenceScore = brief?.confidenceScore || 85;
   const confidenceColor = () => {
-    if (confidenceScore >= 90) return 'text-green-700 border-green-200 bg-green-50';
-    if (confidenceScore >= 75) return 'text-blue-700 border-blue-200 bg-blue-50';
-    if (confidenceScore >= 60) return 'text-orange-700 border-orange-200 bg-orange-50';
+    if (confidenceScore >= 85) return 'text-green-700 border-green-200 bg-green-50';
+    if (confidenceScore >= 70) return 'text-blue-700 border-blue-200 bg-blue-50';
+    if (confidenceScore >= 50) return 'text-orange-700 border-orange-200 bg-orange-50';
     return 'text-red-700 border-red-200 bg-red-50';
   };
 
   const confidenceLabel = () => {
-    if (confidenceScore >= 90) return 'High Confidence';
-    if (confidenceScore >= 75) return 'Moderate Confidence';
-    if (confidenceScore >= 60) return 'Low Confidence';
-    return 'Unverified Data';
+    if (confidenceScore >= 85) return 'High Confidence';
+    if (confidenceScore >= 70) return 'Confidence';
+    if (confidenceScore >= 50) return 'Likely Confidence';
+    return 'Not Confidence';
   };
 
   const handleCopy = async () => {
@@ -102,7 +102,8 @@ FounderBrief · Handcrafted Business Intelligence`;
       filename:     `FounderBrief-${company.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.pdf`,
       image:        { type: 'jpeg', quality: 0.98 },
       html2canvas:  { scale: 2, useCORS: true, logging: false },
-      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak:    { mode: ['css', 'legacy'] }
     };
 
     html2pdf().set(opt).from(element).save().then(() => {

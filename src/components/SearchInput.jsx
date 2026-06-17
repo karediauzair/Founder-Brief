@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Briefcase, Target, ShieldCheck, Zap, Search, FileText, CheckCircle2 } from 'lucide-react';
+import { Briefcase, Target, ShieldCheck, Zap, Search, FileText, CheckCircle2, Database, Users, Bell, Download } from 'lucide-react';
 
 const PURPOSE_TEMPLATES = {
   "Investor Meeting": "I am preparing for an investor meeting and would like to understand the company's growth indicators, market position, business model, competitive advantages, and potential risks.",
@@ -18,10 +18,18 @@ export default function SearchInput({ onSearch }) {
   const [purposeError, setPurposeError] = useState('');
   const companyInputRef = useRef(null);
 
+  const [recentSearches, setRecentSearches] = useState([]);
+
   // Autofocus the company name input on load
   useEffect(() => {
     if (companyInputRef.current) {
       companyInputRef.current.focus();
+    }
+    const saved = localStorage.getItem('fb_recent_searches');
+    if (saved) {
+      try {
+        setRecentSearches(JSON.parse(saved));
+      } catch (e) {}
     }
   }, []);
 
@@ -47,7 +55,11 @@ export default function SearchInput({ onSearch }) {
     }
 
     if (valid) {
-      onSearch(company.trim(), purpose.trim());
+      const newSearch = company.trim();
+      let updated = [newSearch, ...recentSearches.filter(s => s.toLowerCase() !== newSearch.toLowerCase())].slice(0, 4);
+      setRecentSearches(updated);
+      localStorage.setItem('fb_recent_searches', JSON.stringify(updated));
+      onSearch(newSearch, purpose.trim());
     }
   };
 
@@ -70,16 +82,14 @@ export default function SearchInput({ onSearch }) {
       {/* Header */}
       <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-[1200px] mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-gray-900 rounded-md flex items-center justify-center">
-              <Zap className="w-3.5 h-3.5 text-white" />
-            </div>
-            <span className="text-lg font-bold text-gray-900 tracking-tight">FounderBrief</span>
+          <div className="flex items-center gap-3">
+            <img src="/logo-icon.png" alt="Logo" className="h-10 w-auto" />
+            <span className="text-2xl font-extrabold text-gray-900 tracking-tight">FounderBrief</span>
           </div>
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-500">
             <a href="#features" className="hover:text-gray-900 transition-colors">Features</a>
             <a href="#how-it-works" className="hover:text-gray-900 transition-colors">How It Works</a>
-            <a href="#" className="hover:text-gray-900 transition-colors">About</a>
+            <a href="#upcoming" className="hover:text-gray-900 transition-colors">What's Next</a>
           </nav>
         </div>
       </header>
@@ -134,17 +144,33 @@ export default function SearchInput({ onSearch }) {
               </div>
               {companyError && <p className="text-red-500 text-xs mt-2 font-medium">{companyError}</p>}
               
-              <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-gray-400">
-                <span className="font-medium">Try:</span>
-                {SUGGESTIONS.map((suggestion) => (
-                  <button
-                    key={suggestion}
-                    type="button"
-                    onClick={() => handleSuggestionClick(suggestion)}
-                    className="hover:text-gray-900 font-medium transition-colors duration-150 underline decoration-gray-200 underline-offset-4 hover:decoration-gray-400"
-                  >
-                    {suggestion}
-                  </button>
+              <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-gray-400">
+                <span className="font-medium mr-1">{recentSearches.length > 0 ? "Recent:" : "Try:"}</span>
+                {(recentSearches.length > 0 ? recentSearches : SUGGESTIONS).map((suggestion) => (
+                  <div key={suggestion} className="flex items-center group relative bg-gray-50 border border-gray-200 rounded-full pl-3 pr-1 py-1 hover:border-gray-300 transition-colors shadow-sm">
+                    <button
+                      type="button"
+                      onClick={() => handleSuggestionClick(suggestion)}
+                      className="hover:text-gray-900 font-medium transition-colors duration-150 mr-1 text-gray-600"
+                    >
+                      {suggestion}
+                    </button>
+                    {recentSearches.length > 0 && (
+                      <button 
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const updated = recentSearches.filter(s => s !== suggestion);
+                          setRecentSearches(updated);
+                          localStorage.setItem('fb_recent_searches', JSON.stringify(updated));
+                        }}
+                        className="text-gray-400 hover:bg-red-100 hover:text-red-500 rounded-full p-0.5 transition-colors"
+                        title="Remove"
+                      >
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                    )}
+                  </div>
                 ))}
               </div>
             </div>
@@ -160,6 +186,19 @@ export default function SearchInput({ onSearch }) {
                 }`}>
                   {purpose.length}/500
                 </span>
+              </div>
+              
+              <div className="flex flex-wrap gap-2 mb-3">
+                {Object.keys(PURPOSE_TEMPLATES).map((label) => (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => handlePillClick(label)}
+                    className="px-3 py-1 rounded-full border border-gray-200 bg-white text-[11px] font-medium text-gray-600 hover:border-gray-300 hover:text-gray-900 transition-colors"
+                  >
+                    {label}
+                  </button>
+                ))}
               </div>
               
               <textarea
@@ -189,24 +228,7 @@ export default function SearchInput({ onSearch }) {
           </form>
         </div>
 
-        {/* Small Trust Section / Quick Select */}
-        <div className="mt-8 text-center max-w-2xl w-full fade-in" style={{ animationDelay: '200ms' }}>
-          <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 block mb-3">
-            Used For
-          </span>
-          <div className="flex flex-wrap justify-center gap-2">
-            {Object.keys(PURPOSE_TEMPLATES).map((label) => (
-              <button
-                key={label}
-                type="button"
-                onClick={() => handlePillClick(label)}
-                className="px-4 py-1.5 rounded-full border border-gray-200 bg-white text-xs font-medium text-gray-600 hover:border-gray-300 hover:text-gray-900 transition-colors"
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
+
       </main>
 
       {/* Feature Highlights */}
@@ -277,7 +299,7 @@ export default function SearchInput({ onSearch }) {
             </div>
 
             <div className="relative z-10 flex flex-col items-center">
-              <div className="w-16 h-16 bg-gray-900 text-white rounded-2xl flex items-center justify-center mb-6 shadow-md text-xl font-bold">
+              <div className="w-16 h-16 bg-white border border-gray-200 rounded-2xl flex items-center justify-center mb-6 shadow-sm text-xl font-bold text-gray-900">
                 3
               </div>
               <h3 className="text-base font-semibold text-gray-900 mb-2">Generate Intelligence Brief</h3>
@@ -296,18 +318,30 @@ export default function SearchInput({ onSearch }) {
           <h2 className="text-3xl font-bold text-gray-900 tracking-tight mb-8">What's Next for FounderBrief</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
             <div className="p-5 border border-gray-100 rounded-xl bg-[#FAFAFA]">
+              <div className="w-8 h-8 bg-blue-50 border border-blue-100 rounded-lg flex items-center justify-center mb-3 text-blue-600">
+                <Database className="w-4 h-4" />
+              </div>
               <h4 className="font-semibold text-gray-900 mb-1">CRM Integration</h4>
               <p className="text-sm text-gray-500">Automatically sync briefs to Salesforce and HubSpot.</p>
             </div>
             <div className="p-5 border border-gray-100 rounded-xl bg-[#FAFAFA]">
+              <div className="w-8 h-8 bg-purple-50 border border-purple-100 rounded-lg flex items-center justify-center mb-3 text-purple-600">
+                <Users className="w-4 h-4" />
+              </div>
               <h4 className="font-semibold text-gray-900 mb-1">Team Collaboration</h4>
               <p className="text-sm text-gray-500">Share briefs with your team and add private notes.</p>
             </div>
             <div className="p-5 border border-gray-100 rounded-xl bg-[#FAFAFA]">
+              <div className="w-8 h-8 bg-orange-50 border border-orange-100 rounded-lg flex items-center justify-center mb-3 text-orange-600">
+                <Bell className="w-4 h-4" />
+              </div>
               <h4 className="font-semibold text-gray-900 mb-1">Automated Monitoring</h4>
               <p className="text-sm text-gray-500">Get alerts when a target company has major news.</p>
             </div>
             <div className="p-5 border border-gray-100 rounded-xl bg-[#FAFAFA]">
+              <div className="w-8 h-8 bg-green-50 border border-green-100 rounded-lg flex items-center justify-center mb-3 text-green-600">
+                <Download className="w-4 h-4" />
+              </div>
               <h4 className="font-semibold text-gray-900 mb-1">Export to Notion</h4>
               <p className="text-sm text-gray-500">1-click export to your existing Notion workspaces.</p>
             </div>
@@ -319,7 +353,7 @@ export default function SearchInput({ onSearch }) {
       <footer className="w-full max-w-[1200px] mx-auto py-12 px-6 mt-20 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-6">
         <div className="flex flex-col items-center md:items-start text-center md:text-left">
           <div className="flex items-center gap-2 mb-2">
-            <Zap className="w-4 h-4 text-blue-600" />
+            <img src="/logo-icon.png" alt="Logo" className="h-6 w-auto" />
             <span className="font-bold text-gray-900 tracking-tight">FounderBrief</span>
           </div>
           <p className="text-xs text-gray-500 max-w-xs">
@@ -336,10 +370,7 @@ export default function SearchInput({ onSearch }) {
           <p className="text-[11px] text-gray-500 mb-4 max-w-[200px]">
             Karedia Uzair, Chougle Talha, Shaikh Amr, Shaikh Abdurrahman
           </p>
-          <div className="flex gap-4">
-            <a href="#" className="text-xs text-gray-400 hover:text-gray-900 font-medium transition-colors">GitHub</a>
-            <a href="#" className="text-xs text-gray-400 hover:text-gray-900 font-medium transition-colors">Live Demo</a>
-          </div>
+
         </div>
       </footer>
     </div>

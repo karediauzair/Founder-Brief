@@ -38,8 +38,8 @@ Generate the brief now. Return ONLY valid JSON.`;
 
   try {
     const modelsToTry = [
-      "google/gemini-2.0-flash-lite-preview-02-05:free",
-      "google/gemma-2-9b-it:free",
+      "google/gemma-4-31b-it:free",
+      "nvidia/nemotron-nano-9b-v2:free",
       "openrouter/free"
     ];
 
@@ -52,7 +52,7 @@ Generate the brief now. Return ONLY valid JSON.`;
       console.log(`[API Server] Attempting brief generation with model: ${model}`);
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
-        signal: AbortSignal.timeout(40000), // 40-second timeout to prevent 3-min hanging
+        signal: AbortSignal.timeout(30000), // 30-second timeout
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`
