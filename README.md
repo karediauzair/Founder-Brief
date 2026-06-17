@@ -1,59 +1,124 @@
 # FounderBrief
 
-**Know Any Company in 30 Seconds.**
+# Know Any Company in 30 Seconds
 
-FounderBrief is an AI-powered meeting intelligence platform designed to help founders, investors, operators, and business professionals prepare for important conversations faster.
 
-Instead of spending hours jumping between LinkedIn, company websites, news articles, Crunchbase, and search results, users can simply enter a company name along with their research objective and receive a structured intelligence brief tailored to their needs.
+> AI-powered meeting intelligence platform that transforms hours of company research into actionable business insights, meeting strategies, and decision-ready intelligence in under 30 seconds.
 
-Whether you're preparing for an investor meeting, partnership discussion, competitor analysis, vendor evaluation, or sales conversation, FounderBrief helps you walk into the meeting informed and prepared.
+## 🔗 Live Demo
+
+**Website:** https://founder-brief-lime.vercel.app/
+
+## 🎥 Demo Video
+
+[Add YouTube Demo Link Here]
+
+The demo showcases:
+
+* Company Search
+* Goal-Based Research
+* AI-Powered Intelligence Brief Generation
+* Meeting Strategy Recommendations
+* Source Transparency
+* Confidence Scoring
 
 ---
 
-## Problem Statement
+# 🧠 The Problem
 
-Before important business meetings, professionals often spend significant time researching companies from multiple sources.
+Before important meetings, professionals spend significant time researching companies across multiple platforms.
+
+Whether it's:
+
+* Investor meetings
+* Partnership discussions
+* Vendor evaluations
+* Competitor research
+* Sales conversations
+
+research is typically spread across:
+
+* Company websites
+* LinkedIn
+* News articles
+* Crunchbase
+* Industry reports
+* Search engines
 
 This process is:
 
 * Time-consuming
-* Repetitive
-* Fragmented across multiple platforms
+* Fragmented
 * Difficult to organize
 * Easy to miss critical information
 
-Founders, investors, and operators frequently spend 1–3 hours researching a single company before an important discussion.
+Professionals often spend 1–3 hours researching a single company before an important discussion.
 
-FounderBrief solves this problem by transforming hours of manual research into a concise, actionable intelligence brief generated in seconds.
-
----
-
-## Project Overview
-
-FounderBrief combines live web research with AI-powered analysis to generate company intelligence reports tailored to a user's specific objective.
-
-Users provide:
-
-* Company Name or Website URL
-* Research Purpose
-
-The platform then:
-
-1. Collects relevant public information from trusted online sources.
-2. Analyzes and synthesizes the information using AI.
-3. Generates a structured business intelligence brief.
-4. Provides goal-specific insights and meeting preparation recommendations.
-
-The result is a focused report that helps users quickly understand a company and prepare for meaningful conversations.
+FounderBrief solves this problem by transforming hours of research into a structured intelligence brief generated in seconds.
 
 ---
 
-## Key Features
+# 💡 The Solution
+
+FounderBrief combines live web research with AI-powered synthesis to generate business intelligence tailored to a user's specific objective.
+
+```text
+Company Name / URL
+        +
+Research Purpose
+        ↓
+Live Web Research
+        ↓
+AI Analysis
+        ↓
+Intelligence Brief
+        ↓
+Meeting Strategy
+```
+
+The same company can generate completely different insights depending on the user's goal.
+
+Examples:
+
+* Investor Meeting
+* Partnership Discussion
+* Vendor Evaluation
+* Competitor Research
+* Sales Preparation
+
+---
+
+# 🚀 Why FounderBrief Is Different
+
+Most AI research tools answer:
+
+> "What do you know about this company?"
+
+FounderBrief answers:
+
+> "I have a meeting with this company tomorrow. How should I prepare?"
+
+While traditional tools focus on information gathering, FounderBrief focuses on meeting preparation and decision support.
+
+| Traditional Research Tools | FounderBrief           |
+| -------------------------- | ---------------------- |
+| Company Profiles           | Meeting Intelligence   |
+| Generic Information        | Goal-Specific Insights |
+| Research                   | Preparation            |
+| Data Collection            | Decision Support       |
+| Static Reports             | Actionable Strategy    |
+
+FounderBrief transforms company research into conversation readiness.
+
+---
+
+# ✨ Key Features
 
 ### Company Intelligence Brief
 
-Generate a structured overview of any company including:
+Generate structured reports including:
 
+* Executive Summary
 * Company Snapshot
 * Business Overview
 * Recent Developments
@@ -62,7 +127,7 @@ Generate a structured overview of any company including:
 
 ### Goal-Based Research
 
-Research results adapt based on the user's objective, such as:
+Research adapts to the user's objective:
 
 * Investor Meetings
 * Partnership Discussions
@@ -73,9 +138,7 @@ Research results adapt based on the user's objective, such as:
 
 ### Meeting Strategy
 
-FounderBrief doesn't stop at company research.
-
-Each report includes practical meeting preparation guidance:
+Every report includes:
 
 * Focus Areas
 * Potential Risks
@@ -84,97 +147,193 @@ Each report includes practical meeting preparation guidance:
 
 ### Source Transparency
 
-Reports include source references to improve trust and provide additional context.
+Every brief links back to the sources used.
 
-### Copy Brief
+### Confidence Scoring
 
-Quickly copy generated intelligence reports for notes, meetings, documentation, or sharing.
+Reports include confidence indicators based on:
 
----
+* Source quality
+* Source consistency
+* Data completeness
 
-## Example Use Cases
+### PDF Export
 
-### Founder Preparing for an Investor Meeting
-
-Understand company background, growth signals, recent developments, and key discussion points before a pitch.
-
-### Business Development Team
-
-Identify partnership opportunities and strategic alignment before outreach.
-
-### Product Manager
-
-Research competitors, market positioning, and industry developments.
-
-### Startup Operator
-
-Evaluate vendors, partners, and service providers more effectively.
+Export intelligence briefs for meetings, documentation, and sharing.
 
 ---
 
-## Tech Stack
 
-### Frontend
+# 📊 Market Opportunity
 
-* Next.js
-* TypeScript
-* Tailwind CSS
+The demand for company intelligence and business research continues to grow across:
 
-### Backend
+* Sales
+* Venture Capital
+* Startups
+* Partnerships
+* Procurement
+* Competitive Intelligence
 
-* Next.js API Routes
+FounderBrief sits at the intersection of:
 
-### AI
+* AI Research
+* Business Intelligence
+* Meeting Preparation
+* Decision Support
 
-* Claude API (Anthropic)
-
-### Research
-
-* Tavily Search API
-
-### Deployment
-
-* Vercel
+Unlike traditional enterprise tools, FounderBrief is designed for individuals, founders, operators, investors, and small teams.
 
 ---
 
-## Setup Instructions
+# 💰 Business Model
 
-### Clone the Repository
+| Tier          | Description                                       |
+| ------------- | ------------------------------------------------- |
+| Free          | Limited monthly briefs                            |
+| Pro           | Unlimited research, PDF exports, advanced reports |
+| Pay-As-You-Go | Credit-based research                             |
+| Team          | Shared workspaces and collaboration               |
+| Enterprise    | API access, SSO, integrations                     |
+
+---
+
+# 🏗️ System Architecture
+
+```text
+User
+ │
+ ▼
+Frontend (Next.js)
+ │
+ ▼
+API Layer
+ │
+ ├── Tavily Search API
+ │
+ └── Claude API
+ │
+ ▼
+Intelligence Engine
+ │
+ ▼
+Meeting Strategy Generator
+ │
+ ▼
+FounderBrief Report
+```
+
+## Workflow
+
+1. User enters a company name and research purpose.
+2. Tavily gathers real-time company information.
+3. Claude analyzes and synthesizes the findings.
+4. FounderBrief generates:
+
+   * Executive Summary
+   * Company Intelligence
+   * Risks & Considerations
+   * Meeting Strategy
+   * Source References
+5. Results are presented in a structured intelligence brief.
+
+---
+
+# 📈 Scalability & Future Architecture
+
+Current implementation is optimized for rapid research generation.
+
+Future improvements include:
+
+### Caching Layer
+
+* Redis / Vercel KV
+* Reduced API costs
+* Faster responses
+
+### Async Processing
+
+* Background job execution
+* Streaming report generation
+
+### Semantic Memory
+
+* Reuse prior company research
+* Avoid duplicate processing
+
+### Multi-Provider Redundancy
+
+* Search provider failover
+* AI provider failover
+
+### Enterprise Readiness
+
+* Team workspaces
+* Organization accounts
+* CRM integrations
+* SSO support
+
+The primary scaling challenge is not infrastructure but managing AI and search API costs efficiently.
+
+---
+
+# 🛠️ Tech Stack
+
+| Layer      | Technology         |
+| ---------- | ------------------ |
+| Frontend   | Next.js            |
+| Language   | TypeScript         |
+| Styling    | Tailwind CSS       |
+| Backend    | Next.js API Routes |
+| AI Engine  | Claude API         |
+| Research   | Tavily Search API  |
+| Deployment | Vercel             |
+
+---
+
+# 🚀 Getting Started
+
+## Clone Repository
 
 ```bash
 git clone <repository-url>
 cd founderbrief
 ```
 
-### Install Dependencies
+## Install Dependencies
 
 ```bash
 npm install
 ```
 
-### Configure Environment Variables
+## Configure Environment Variables
 
-Create a `.env.local` file and add:
+Create:
+
+```env
+.env.local
+```
+
+Add:
 
 ```env
 ANTHROPIC_API_KEY=your_api_key
 TAVILY_API_KEY=your_api_key
 ```
 
-### Run Locally
+## Run Development Server
 
 ```bash
 npm run dev
 ```
 
-Application will be available at:
+Application:
 
 ```text
 http://localhost:3000
 ```
 
-### Production Build
+## Production Build
 
 ```bash
 npm run build
@@ -183,49 +342,68 @@ npm start
 
 ---
 
-## Demo
+# 📋 Example Use Cases
 
-Live Demo:
-
-https://founder-brief-lime.vercel.app/
-
+| Persona              | Goal                          |
+| -------------------- | ----------------------------- |
+| Founder              | Investor Meeting Preparation  |
+| Business Development | Partnership Research          |
+| Product Manager      | Competitor Analysis           |
+| Startup Operator     | Vendor Evaluation             |
+| Consultant           | Client Intelligence Gathering |
 
 ---
 
-## Future Improvements
+# 🗺️ Roadmap
 
-Potential future enhancements include:
+### Product
 
-* PDF Export
 * Report History
-* Shareable Reports
+* Shareable Links
 * Team Collaboration
+* Personalized Templates
+* Advanced Source Validation
+
+### Platform
+
 * CRM Integrations
+* Salesforce Integration
+* HubSpot Integration
 * Meeting Notes Integration
-* Personalized Research Templates
+* Public API
+
+### Enterprise
+
+* Multi-user Organizations
+* SSO Authentication
+* Audit Logs
+* White-label Reports
 
 ---
 
-## Team
+# 👥 Team
 
-### thefirewallcrew
+## Team: thefirewallcrew
 
 * Karedia Uzair
 * Chougle Talha
 * Shaikh Amr
 * Shaikh Abdurrahman
 
+---
+
+# 🎯 Vision
+
+We believe every important business conversation should begin with context.
+
+FounderBrief transforms hours of company research into meeting-ready intelligence, helping founders, investors, consultants, and operators spend less time gathering information and more time making informed decisions.
+
+Our long-term vision is to become the intelligence layer behind every business meeting, partnership discussion, investor conversation, and strategic decision.
 
 ---
 
-## Vision
+# 📄 License
 
-Our goal is simple:
+MIT License
 
-**Stop spending hours researching companies. Start preparing for conversations that matter.**
-
-FounderBrief helps professionals move from information gathering to informed decision-making in minutes instead of hours.
-
----
-
-
+This project is open-source and available under the MIT License.
